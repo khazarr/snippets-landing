@@ -5,25 +5,76 @@
           <input v-model="snippetKey" type="text">
       </div>
       <div class="textinput">
-          <textarea v-model="snippetValue" name="snippetInput" id="" cols="30" rows="10"></textarea>
+          <textarea v-if="typeof activeSnippet.value === 'string'" v-model="snippetValue" name="snippetInput" id="" cols="30" rows="10"></textarea>
+          <textarea v-else v-model="activeSnippet.value.HTML" name="snippetInput" id="" cols="30" rows="10">
+            
+          </textarea>
+            <div class="highlight" v-html="highlited"></div>
+        
       </div>
+
       <div class="save-btn">Save</div>
   </section>
 </template>
 
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   data() {
-      return {
-        snippetKey: "",
-        snippetValue: "halko"
-      }
+    return {
+      snippetKey: "",
+      snippetValue: "",
+      highlited: ""
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'activeSnippet'
+    ])
+  },
+  watch: {
+    activeSnippet(snip) {
+      this.snippetKey = snip.key
+      typeof snip.value === 'string'
+        ? this.snippetValue = snip.value
+        : this.snippetValue = snip.value.HTML
+     
+    },
+    snippetValue(val) {
+   
+      this.highlited = val
+                        .replace(/\n$/g, '\n\n')
+                        .replace(/%\w*%/g, '<mark>$&</mark>');
+    }
+  },
+  mounted() {
+    console.log('mounted')
+    console.log('mounted')
+    this.snippetKey = this.activeSnippet.key
+    this.snippetValue = this.activeSnippet.value
   }
 }
 </script>
 
 <style scoped>
+.textinput {
+  position: relative;
+}
+.highlight {
+      position: absolute;
+    top: 1px;
+    left: 66px;
+    z-index: 1;
+    border: 2px solid #685972;
+    background-color: #fff;
+    overflow: auto;
+    pointer-events: none;
+    transition: transform 1s;
+    height: 222px;
+    width: 550px;
+    text-align: left;
+}
 section {
     background: #EEE0CB;
     padding: 2px;
@@ -71,6 +122,16 @@ section textarea {
     background: #3C1053;
     color:  #EEE0CB;
      transition: all 400ms ease;
+}
+mark {
+  border-radius: 3px;
+  color: transparent;
+  background-color: #b1d5e5;
+}
+
+.highlight {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 20px;
 }
 </style>
 

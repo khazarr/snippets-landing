@@ -5,12 +5,19 @@ Vue.use(Vuex)
 
 const state = {
   count: 0,
+  selectedSnippet: {
+    key: '/zz',
+    value: 'testowe z tablicy 2',
+    id: '12312'
+  },
   snippetsArray: [
     {
       key: '/zz',
-      value: 'testowe z tablicy 2'
+      value: 'testowe z tablicy 2',
+      id: '12312'
     },
     {
+      id: '123',
       key: '/qe',
       value: {
         HTML: 'Hehe %imie% dzieki, zobacze w domu ten %item% xD',
@@ -24,11 +31,12 @@ const state = {
             type: 'text',
             variable: 'item',
             value: ''
-          },
+          }
         ]
       }
     },
     {
+      id: '33',
       key: '/ins',
       value: {
         HTML: 'Hello %name%! I will see %item% later',
@@ -47,6 +55,7 @@ const state = {
       }
     },
     {
+      id: '122233',
       key: '/reco',
       value: {
         HTML: '%main%%ver% \n %product%%ver% \n %category%%ver% \n %basket%%ver%',
@@ -83,11 +92,8 @@ const state = {
 }
 
 const mutations = {
-  INCREMENT (state) {
-    state.count++
-  },
-  DECREMENT (state) {
-    state.count--
+  selectSnippet (state, snippetId) {
+    state.selectedSnippet = state.snippetsArray.find(snippet => snippet.id === snippetId)
   }
 }
 
@@ -102,6 +108,9 @@ const actions = {
 const getters = {
   snippets (state) {
     return state.snippetsArray
+  },
+  activeSnippet (state) {
+    return state.selectedSnippet
   }
 }
 

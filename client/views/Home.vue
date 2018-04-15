@@ -10,6 +10,7 @@
         :key="index"
         :snippetKey="snippet.key"
         :snippetValue="snippet.value"
+        :snippetId="snippet.id"
         :id="index"
       />
     </div>
@@ -34,10 +35,26 @@ export default {
   computed: {
     ...mapGetters([
       'snippets',
+      'activeSnippet'
     ])
   }
 }
+
+/*
+do fire base 
+  var config = {
+    apiKey: "AIzaSyCHjEQ3-l-v9zu9Tgwr0hDNMpw2kIom51U",
+    authDomain: "wklejarka-1d39e.firebaseapp.com",
+    databaseURL: "https://wklejarka-1d39e.firebaseio.com",
+    projectId: "wklejarka-1d39e",
+    storageBucket: "wklejarka-1d39e.appspot.com",
+    messagingSenderId: "480680450073"
+  };
+  firebase.initializeApp(config);
+*/
 </script>
+
+
 
 <style>
 body {

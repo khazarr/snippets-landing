@@ -12,7 +12,7 @@ div {
     border: 2px #BAA898 solid;
     transition: opacity 200ms ease-out;
     opacity: 0.7;
-    color: #848586;
+    color: #3c1053;
 }
 
 div:hover {
