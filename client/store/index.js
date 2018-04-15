@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import * as firebase from 'firebase'
 
 Vue.use(Vuex)
 
 const state = {
   count: 0,
+  loading: false,
   selectedSnippet: {
     key: '/zz',
     value: 'testowe z tablicy 2',
@@ -111,10 +113,57 @@ const mutations = {
         snip.value = newSnippet.value
       }
     })
+  },
+  setLoading (state, payload) {
+    state.loading = payload
   }
 }
 
 const actions = {
+  getSnippetsFromDb ({ commit }) {
+    commit('setLoading', true)
+    const snippets = []
+    firebase.database().ref('snippets').once('value')
+      .then(data => {
+        console.log('obtained data')
+        console.log(data.val())
+        const obj = data.val()
+        for (let key in obj) {
+          const snippet = {
+            id: key,
+            key: obj[key].key,
+            value: obj[key].value
+          }
+          snippets.push(snippet)
+        }
+        console.log(snippets)
+        commit('setLoading', false)
+      })
+      .catch(err => {
+        console.log(err)
+        commit('setLoading', false)
+      })
+  },
+  initializeFirebase ({ dispatch }) {
+    const config = {
+      apiKey: "AIzaSyCHjEQ3-l-v9zu9Tgwr0hDNMpw2kIom51U",
+      authDomain: "wklejarka-1d39e.firebaseapp.com",
+      databaseURL: "https://wklejarka-1d39e.firebaseio.com",
+      projectId: "wklejarka-1d39e",
+      storageBucket: "wklejarka-1d39e.appspot.com",
+      messagingSenderId: "480680450073"
+    }
+    firebase.initializeApp(config)
+    console.log('initialized')
+    dispatch('getSnippetsFromDb')
+  },
+  saveSnippetToDb ({commit}, snippet) {
+    firebase.database().ref('snippets').push(snippet)
+      .then(data => {
+        console.log('dodano')
+        console.log(data)
+      })
+  }
 }
 
 const getters = {

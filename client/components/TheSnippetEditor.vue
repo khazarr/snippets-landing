@@ -19,7 +19,7 @@
             </transition>
       </div>
 
-      <div class="save-btn">Save</div>
+      <div v-on:click="onSnippetSave" class="save-btn">Save</div>
   </section>
 </template>
 
@@ -75,6 +75,9 @@ export default {
     onSnippetChange() {
       // console.log(this.currentStateOfEditedSnippet)
        this.$store.commit('editSnippet',this.currentStateOfEditedSnippet)
+    },
+    onSnippetSave() {
+      this.$store.dispatch('saveSnippetToDb',this.currentStateOfEditedSnippet)
     }
   }
 }

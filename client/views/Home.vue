@@ -37,6 +37,9 @@ export default {
       'snippets',
       'activeSnippet'
     ])
+  },
+  created() {
+    this.$store.dispatch('initializeFirebase')
   }
 }
 
@@ -77,7 +80,7 @@ h1 {
   min-height: 500px;
   overflow: auto;
   float: left;
-  width: 400px;
+  width: 35%;
 
 }
 .logo-magic-enter-active {
