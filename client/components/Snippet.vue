@@ -1,5 +1,5 @@
 <template>
-  <section @click="onSnippetClick">
+  <section @click="onSnippetClick" v-bind:class="{ active: isActive }">
       <div>
         <p> <span>{{id + 1}}</span> {{snippetKey}}</p>
       </div>
@@ -7,11 +7,19 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   props: ["snippetKey", "snippetValue", "id", 'snippetId'],
+  computed: {
+    ...mapGetters([
+      'activeSnippet'
+    ]),
+    isActive() {
+      return this.snippetId == this.activeSnippet.id
+    }
+  },
   methods: {
     onSnippetClick() {
-      console.log(this.snippetId);
       this.$store.commit('selectSnippet',this.snippetId)
     }
   }
@@ -33,6 +41,10 @@ section:hover {
   cursor: pointer;
   opacity: 0.96;
   transition: opacity 200ms ease-out;
+}
+
+.active {
+  opacity: 1;
 }
 
 section div {

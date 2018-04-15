@@ -70,7 +70,7 @@ h1 {
 .page {
   width: 60%;
   display: block;
-  margin: 0 auto;
+  margin:  100px auto;
 }
 .snippets {
   max-height: 500px;

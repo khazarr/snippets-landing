@@ -5,12 +5,18 @@
           <input v-model="snippetKey" type="text">
       </div>
       <div class="textinput">
-          <textarea v-if="typeof activeSnippet.value === 'string'" v-model="snippetValue" name="snippetInput" id="" cols="30" rows="10"></textarea>
-          <textarea v-else v-model="activeSnippet.value.HTML" name="snippetInput" id="" cols="30" rows="10">
+          <textarea v-if="typeof activeSnippet.value === 'string'" v-model="snippetValue" name="snippetInput" id="" cols="30" rows="10" v-on:focus="showHelper=true" v-on:blur="showHelper=false"></textarea>
+          <textarea v-else v-model="activeSnippet.value.HTML" name="snippetInput" id="" cols="30" rows="10" v-on:focus="showHelper=true" v-on:blur="showHelper=false">
             
           </textarea>
-            <div class="highlight" v-html="highlited"></div>
-        
+            <transition name="fade" appear>
+              <div class="highlight" v-show="showHighlits" v-html="highlited"></div>
+            </transition>
+            <transition name="logo-magic" appear>
+              <div class="info-helper" v-show="showHelper">
+                Variables have to be surrounded by '%'. <span v-on:mouseover="showHighlits=true" v-on:mouseleave="showHighlits=false">Preview</span> 
+              </div>
+            </transition>
       </div>
 
       <div class="save-btn">Save</div>
@@ -25,7 +31,9 @@ export default {
     return {
       snippetKey: "",
       snippetValue: "",
-      highlited: ""
+      highlited: "",
+      showHelper: true,
+      showHighlits: false
     }
   },
   computed: {
@@ -44,7 +52,7 @@ export default {
     snippetValue(val) {
    
       this.highlited = val
-                        .replace(/\n$/g, '\n\n')
+                        .replace(/\n/g, '\n\n')
                         .replace(/%\w*%/g, '<mark>$&</mark>');
     }
   },
@@ -58,6 +66,20 @@ export default {
 </script>
 
 <style scoped>
+.info-helper {
+  font-size: 17px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -26px;
+  width: 80%;
+  margin: auto;
+  background: rgba(0,0,0,0.6);
+  padding: 3px;
+  color: #eee0cb;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
 .textinput {
   position: relative;
 }
@@ -72,7 +94,7 @@ export default {
     pointer-events: none;
     transition: transform 1s;
     height: 222px;
-    width: 550px;
+    width: 555px;
     text-align: left;
 }
 section {
@@ -99,6 +121,7 @@ section .key span {
 section .key input {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-size: 20px;
+    border: 2px solid #685972;
 }
 
 section textarea {
@@ -133,5 +156,38 @@ mark {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-size: 20px;
 }
+
+.logo-magic-enter-active {
+  transition: 
+    opacity .3s,
+    transform 1s;
+    transition-delay: 200ms;
+}
+
+.logo-magic-leave-active {
+    transition: 
+    opacity .3s,
+    transform 1s;
+    transition-delay: 200ms;
+}
+
+.logo-magic-enter, .logo-magic-leave-to {
+  opacity: 0;
+  transform: translateY(-50%);
+}
+
+.fade-enter-active {
+  transition: all .3s ease;
+}
+.fade-leave-active {
+  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.fade-enter, .fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+
+
 </style>
 
