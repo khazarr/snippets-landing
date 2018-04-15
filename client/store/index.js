@@ -94,15 +94,27 @@ const state = {
 const mutations = {
   selectSnippet (state, snippetId) {
     state.selectedSnippet = state.snippetsArray.find(snippet => snippet.id === snippetId)
+  },
+  addNewSnippet (state) {
+    const snippet = {
+      key: '',
+      value: '',
+      id: +new Date()
+    }
+    state.snippetsArray.push(snippet)
+    state.selectedSnippet = state.snippetsArray.find(snip => snip.id === snippet.id)
+  },
+  editSnippet (state, newSnippet) {
+    state.snippetsArray.map(snip => {
+      if (snip.id === newSnippet.id) {
+        snip.key = newSnippet.key
+        snip.value = newSnippet.value
+      }
+    })
   }
 }
 
 const actions = {
-  incrementAsync ({ commit }) {
-    setTimeout(() => {
-      commit('INCREMENT')
-    }, 200)
-  }
 }
 
 const getters = {

@@ -2,9 +2,9 @@
   <section>
       <div class="key">
           <span>Hotkey</span>
-          <input v-model="snippetKey" type="text">
+          <input v-on:keyup="onSnippetChange" v-model="snippetKey" type="text">
       </div>
-      <div class="textinput">
+      <div class="textinput" v-on:keyup="onSnippetChange" >
           <textarea v-if="typeof activeSnippet.value === 'string'" v-model="snippetValue" name="snippetInput" id="" cols="30" rows="10" v-on:focus="showHelper=true" v-on:blur="showHelper=false"></textarea>
           <textarea v-else v-model="activeSnippet.value.HTML" name="snippetInput" id="" cols="30" rows="10" v-on:focus="showHelper=true" v-on:blur="showHelper=false">
             
@@ -32,18 +32,27 @@ export default {
       snippetKey: "",
       snippetValue: "",
       highlited: "",
-      showHelper: true,
+      id: null,
+      showHelper: false,
       showHighlits: false
     }
   },
   computed: {
     ...mapGetters([
       'activeSnippet'
-    ])
+    ]),
+    currentStateOfEditedSnippet() {
+      return {
+        id: this.id,
+        key: this.snippetKey,
+        value: this.snippetValue
+      }
+    }
   },
   watch: {
     activeSnippet(snip) {
       this.snippetKey = snip.key
+      this.id = snip.id
       typeof snip.value === 'string'
         ? this.snippetValue = snip.value
         : this.snippetValue = snip.value.HTML
@@ -58,9 +67,15 @@ export default {
   },
   mounted() {
     console.log('mounted')
-    console.log('mounted')
     this.snippetKey = this.activeSnippet.key
     this.snippetValue = this.activeSnippet.value
+    this.id = this.activeSnippet.id
+  },
+  methods: {
+    onSnippetChange() {
+      // console.log(this.currentStateOfEditedSnippet)
+       this.$store.commit('editSnippet',this.currentStateOfEditedSnippet)
+    }
   }
 }
 </script>
