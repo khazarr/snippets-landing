@@ -26,13 +26,22 @@
         <div v-on:click="onSnippetUpdate" class="action-btn">Update</div>
         <div v-on:click="onSnippetDelete" class="action-btn">Delete</div>
       </div>
+      <TheDeleteModal 
+        :isModalOpen="isModalOpen"
+        :id = "id"
+        @modalClicked="onModalClicked"
+      />
   </section>
 </template>
 
 
 <script>
 import { mapGetters } from 'vuex'
+import TheDeleteModal from './TheDeleteModal'
 export default {
+  components: {
+    TheDeleteModal
+  },
   data() {
     return {
       snippetKey: "",
@@ -41,7 +50,8 @@ export default {
       id: null,
       showHelper: false,
       showHighlits: false,
-      snippetSaved: false
+      snippetSaved: false,
+      isModalOpen: false
     }
   },
   computed: {
@@ -132,8 +142,12 @@ export default {
      
     },
     onSnippetDelete() {
-       this.$store.dispatch('deleteSnippetFromDB',this.currentStateOfEditedSnippet)
+      // this.$store.dispatch('deleteSnippetFromDB',this.currentStateOfEditedSnippet)
       console.log('delete')
+      this.isModalOpen = true
+    },
+    onModalClicked(data) {
+      this.isModalOpen = false
     }
   }
 }
