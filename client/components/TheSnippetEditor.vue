@@ -6,7 +6,7 @@
       </div>
       <div class="textinput" v-on:keyup="onSnippetChange" >
           <textarea v-if="typeof activeSnippet.value === 'string'" v-model="snippetValue" name="snippetInput" id="" cols="30" rows="10" v-on:focus="showHelper=true" v-on:blur="showHelper=false"></textarea>
-          <textarea v-else v-model="activeSnippet.value.HTML" name="snippetInput" id="" cols="30" rows="10" v-on:focus="showHelper=true" v-on:blur="showHelper=false">
+          <textarea v-else v-model="snippetValue" name="snippetInput" id="" cols="30" rows="10" v-on:focus="showHelper=true" v-on:blur="showHelper=false">
             
           </textarea>
             <transition name="fade" appear>
@@ -19,7 +19,13 @@
             </transition>
       </div>
 
-      <div v-on:click="onSnippetSave" class="save-btn">Save</div>
+      <div v-if="id.includes('new') && !snippetSaved">
+        <div v-on:click="onSnippetSave" class="action-btn">Save</div>
+      </div>
+      <div v-else>
+        <div v-on:click="onSnippetUpdate" class="action-btn">Update</div>
+        <div v-on:click="onSnippetDelete" class="action-btn">Delete</div>
+      </div>
   </section>
 </template>
 
@@ -34,18 +40,56 @@ export default {
       highlited: "",
       id: null,
       showHelper: false,
-      showHighlits: false
+      showHighlits: false,
+      snippetSaved: false
     }
   },
   computed: {
     ...mapGetters([
       'activeSnippet'
     ]),
-    currentStateOfEditedSnippet() {
+    currentStateOfEditedSnippet () {
+      return this.isComplexSnippet
+        ? this.prepareComplexSnippet
+        : this.prepareSimpleSnippet
+    },
+    isComplexSnippet () {
+      return this.snippetValue ? this.snippetValue.includes('%') : false
+    },
+    getVariables () {
+      const variablesRegex = /%\w*%/g;
+      const allFoundVariables = this.snippetValue.match(variablesRegex);
+      // console.log('all')
+      // console.log(allFoundVariables)
+      // console.log('val')
+      // console.log(this.snippetValue)
+      const uniqueVariables = Array.from(new Set(allFoundVariables))
+      return uniqueVariables
+    },
+    prepareSimpleSnippet () {
       return {
         id: this.id,
         key: this.snippetKey,
         value: this.snippetValue
+      }
+    },
+    prepareComplexSnippet () {
+      const inputs = [];
+      this.getVariables.map(variable => {
+        inputs.push({
+          type: 'text',
+          variable: variable.replace(/\%/g,''),
+          value: ''
+        })
+      });
+
+      return {
+        id: this.id,
+        key: this.snippetKey,
+        value: {
+          HTML: this.snippetValue,
+          inputs: inputs
+        }
       }
     }
   },
@@ -77,7 +121,17 @@ export default {
        this.$store.commit('editSnippet',this.currentStateOfEditedSnippet)
     },
     onSnippetSave() {
+      // console.log(this.getVariables)
+      // console.log(this.isComplexSnippet)
+      // console.log(this.currentStateOfEditedSnippet)
+      this.snippetSaved = true
       this.$store.dispatch('saveSnippetToDb',this.currentStateOfEditedSnippet)
+    },
+    onSnippetUpdate() {
+      console.log('update')
+    },
+    onSnippetDelete() {
+      console.log('delete')
     }
   }
 }
@@ -150,7 +204,7 @@ section textarea {
     font-size: 20px;
 }
 
-.save-btn {
+.action-btn {
     float: right;
     margin-right: 30px;
     color: #3C1053;
@@ -158,7 +212,7 @@ section textarea {
     transition: all 400ms ease;
 }
 
-.save-btn:hover {
+.action-btn:hover {
     cursor: pointer;
     background: #3C1053;
     color:  #EEE0CB;

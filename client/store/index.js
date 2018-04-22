@@ -13,83 +13,83 @@ const state = {
     id: '12312'
   },
   snippetsArray: [
-    {
-      key: '/zz',
-      value: 'testowe z tablicy 2',
-      id: '12312'
-    },
-    {
-      id: '123',
-      key: '/qe',
-      value: {
-        HTML: 'Hehe %imie% dzieki, zobacze w domu ten %item% xD',
-        inputs: [
-          {
-            type: 'text',
-            variable: 'imie',
-            value: ''
-          },
-          {
-            type: 'text',
-            variable: 'item',
-            value: ''
-          }
-        ]
-      }
-    },
-    {
-      id: '33',
-      key: '/ins',
-      value: {
-        HTML: 'Hello %name%! I will see %item% later',
-        inputs: [
-          {
-            type: 'text',
-            variable: 'name',
-            value: ''
-          },
-          {
-            type: 'text',
-            variable: 'item',
-            value: ''
-          }
-        ]
-      }
-    },
-    {
-      id: '122233',
-      key: '/reco',
-      value: {
-        HTML: '%main%%ver% \n %product%%ver% \n %category%%ver% \n %basket%%ver%',
-        inputs: [
-          {
-            type: 'text',
-            variable: 'main',
-            value: ''
-          },
-          {
-            type: 'text',
-            variable: 'product',
-            value: ''
-          },
-          {
-            type: 'text',
-            variable: 'category',
-            value: ''
-          },
-          {
-            type: 'text',
-            variable: 'basket',
-            value: ''
-          },
-          {
-            type: 'text',
-            variable: 'ver',
-            value: ''
-          }
-        ]
-      }
-    }
+    // {
+    //   key: '/zz',
+    //   value: 'testowe z tablicy 2',
+    //   id: '12312'
+    // },
+    // {
+    //   id: '123',
+    //   key: '/qe',
+    //   value: {
+    //     HTML: 'Hehe %imie% dzieki, zobacze w domu ten %item% xD',
+    //     inputs: [
+    //       {
+    //         type: 'text',
+    //         variable: 'imie',
+    //         value: ''
+    //       },
+    //       {
+    //         type: 'text',
+    //         variable: 'item',
+    //         value: ''
+    //       }
+    //     ]
+    //   }
+    // },
+    // {
+    //   id: '33',
+    //   key: '/ins',
+    //   value: {
+    //     HTML: 'Hello %name%! I will see %item% later',
+    //     inputs: [
+    //       {
+    //         type: 'text',
+    //         variable: 'name',
+    //         value: ''
+    //       },
+    //       {
+    //         type: 'text',
+    //         variable: 'item',
+    //         value: ''
+    //       }
+    //     ]
+    //   }
+    // },
+    // {
+    //   id: '122233',
+    //   key: '/reco',
+    //   value: {
+    //     HTML: '%main%%ver% \n %product%%ver% \n %category%%ver% \n %basket%%ver%',
+    //     inputs: [
+    //       {
+    //         type: 'text',
+    //         variable: 'main',
+    //         value: ''
+    //       },
+    //       {
+    //         type: 'text',
+    //         variable: 'product',
+    //         value: ''
+    //       },
+    //       {
+    //         type: 'text',
+    //         variable: 'category',
+    //         value: ''
+    //       },
+    //       {
+    //         type: 'text',
+    //         variable: 'basket',
+    //         value: ''
+    //       },
+    //       {
+    //         type: 'text',
+    //         variable: 'ver',
+    //         value: ''
+    //       }
+    //     ]
+    //   }
+    // }
   ]
 }
 
@@ -98,10 +98,11 @@ const mutations = {
     state.selectedSnippet = state.snippetsArray.find(snippet => snippet.id === snippetId)
   },
   addNewSnippet (state) {
+    const unixTimestamp = +new Date()
     const snippet = {
       key: '',
       value: '',
-      id: +new Date()
+      id: `new${unixTimestamp}`
     }
     state.snippetsArray.push(snippet)
     state.selectedSnippet = state.snippetsArray.find(snip => snip.id === snippet.id)
@@ -114,8 +115,20 @@ const mutations = {
       }
     })
   },
+  setNewlyAddedSnippetPropperId (state, payload) {
+    const newId = payload.newId
+    const oldId = payload.oldId
+    state.snippetsArray.map(snip => {
+      if (snip.id === oldId) {
+        snip.id = newId
+      }
+    })
+  },
   setLoading (state, payload) {
     state.loading = payload
+  },
+  setLoadedSnippets (state, payload) {
+    state.snippetsArray = payload
   }
 }
 
@@ -137,6 +150,8 @@ const actions = {
           snippets.push(snippet)
         }
         console.log(snippets)
+        commit('setLoadedSnippets', snippets)
+        commit('selectSnippet', snippets[0].id)
         commit('setLoading', false)
       })
       .catch(err => {
@@ -161,7 +176,11 @@ const actions = {
     firebase.database().ref('snippets').push(snippet)
       .then(data => {
         console.log('dodano')
-        console.log(data)
+        const payload = {
+          newId: data.key,
+          oldId: snippet.id
+        }
+        commit('setNewlyAddedSnippetPropperId', payload)
       })
   }
 }

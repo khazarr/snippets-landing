@@ -1,7 +1,7 @@
 <template>
   <section @click="onSnippetClick" v-bind:class="{ active: isActive }">
       <div>
-        <p> <span>{{id + 1}}</span> {{snippetKey}}</p>
+        <p> <span>{{id + 1}}</span> {{snippetKey}} </p>
       </div>
   </section>
 </template>
@@ -35,6 +35,7 @@ section {
   transition: opacity 200ms ease-out;
   opacity: 0.7;
   color: #3c1053;
+  position: relative;
 }
 
 section:hover {
@@ -54,7 +55,10 @@ section div {
 section span {
   background: #3c1053;
   color: #eee0cb;
-  padding: 10px 20px;
+  padding: 3px 12px;
   border-radius: 100%;
+}
+
+section p {
 }
 </style>
