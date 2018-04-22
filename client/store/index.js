@@ -129,6 +129,10 @@ const mutations = {
   },
   setLoadedSnippets (state, payload) {
     state.snippetsArray = payload
+  },
+  deleteSnippetLocally (state, snippetId) {
+    const snippets = state.snippetsArray
+    snippets.splice(snippets.findIndex(snippet => snippet.id === snippetId), 1)
   }
 }
 
@@ -181,6 +185,16 @@ const actions = {
           oldId: snippet.id
         }
         commit('setNewlyAddedSnippetPropperId', payload)
+      })
+  },
+  deleteSnippetFromDB ({commit}, snippet) {
+    firebase.database().ref('snippets').child(snippet.id)
+      .remove()
+      .then(() => {
+        commit('deleteSnippetLocally', snippet.id)
+      })
+      .catch(err => {
+        console.log(err)
       })
   }
 }

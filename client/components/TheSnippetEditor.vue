@@ -129,8 +129,10 @@ export default {
     },
     onSnippetUpdate() {
       console.log('update')
+     
     },
     onSnippetDelete() {
+       this.$store.dispatch('deleteSnippetFromDB',this.currentStateOfEditedSnippet)
       console.log('delete')
     }
   }
