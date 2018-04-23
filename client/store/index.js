@@ -187,12 +187,19 @@ const actions = {
         commit('setNewlyAddedSnippetPropperId', payload)
       })
   },
-  deleteSnippetFromDB ({commit}, snippetId) {
+  deleteSnippetFromDB ({ commit }, snippetId) {
     firebase.database().ref('snippets').child(snippetId)
       .remove()
       .then(() => {
         commit('deleteSnippetLocally', snippetId)
       })
+      .catch(err => {
+        console.log(err)
+      })
+  },
+  updateSnippetInDb ({ commit }, snippet) {
+    firebase.database().ref('snippets').child(snippet.id)
+      .update(snippet)
       .catch(err => {
         console.log(err)
       })

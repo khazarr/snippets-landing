@@ -23,7 +23,7 @@
         <div v-on:click="onSnippetSave" class="action-btn">Save</div>
       </div>
       <div v-else>
-        <div v-on:click="onSnippetUpdate" class="action-btn">Update</div>
+        <!-- <div v-on:click="onSnippetUpdate" class="action-btn">Update</div> -->
         <div v-on:click="onSnippetDelete" class="action-btn">Delete</div>
       </div>
       <TheDeleteModal 
@@ -129,6 +129,7 @@ export default {
     onSnippetChange() {
       // console.log(this.currentStateOfEditedSnippet)
        this.$store.commit('editSnippet',this.currentStateOfEditedSnippet)
+       this.$store.dispatch('updateSnippetInDb',this.currentStateOfEditedSnippet)
     },
     onSnippetSave() {
       // console.log(this.getVariables)
@@ -139,6 +140,7 @@ export default {
     },
     onSnippetUpdate() {
       console.log('update')
+      this.$store.dispatch('updateSnippetInDb',this.currentStateOfEditedSnippet)
      
     },
     onSnippetDelete() {
